@@ -1,0 +1,199 @@
+{include file="public/header" /}
+<style>
+    .layui-table-view .layui-table[lay-size=lg] .layui-table-cell {height: 58px;line-height: 58px;}
+    .wx-audio-content{padding:0px;border:0px;}
+    .wx-audio-content .wx-audio-left .wx-audio-state{margin-bottom:15px;}
+    .wx-audio-content .wx-audio-right .wx-audio-time{padding-top:0px;position: relative;bottom:6px;}
+    .wx-audio-content .wx-audio-right .wx-audio-progrees{top:6px;}
+</style>
+<body>
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <div class="layui-input-inline">
+                        <input type="text" name="start" class="layui-input" onclick="wk.lay_date(this);" placeholder="创建开始日期">
+                    </div>
+                    <div class="layui-form-mid">
+                        -
+                    </div>
+                    <div class="layui-input-inline">
+                        <input type="text" name="end" class="layui-input" onclick="wk.lay_date(this);" placeholder="创建结束日期">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-inline">
+                        <input type="text" id="key" class="layui-input" name="key" placeholder="文章名称"/>
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <select name="type"  id="">
+                        <option value="">请选择模块</option>
+                        <option value="1">数字联展</option>
+                        <option value="2">思政课</option>
+                    </select>
+                </div>
+
+                <div class="layui-inline">
+                    <div class="layui-input-inline">
+                        <button class="layui-btn" lay-submit="" lay-filter="LAY-search">立即搜索</button>
+                        <button  class="layui-btn layui-btn-normal" id="empty"  lay-submit="" lay-filter="LAY-search">重置</button>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <button class="layui-btn" data-type="add" onclick="wk.layer_show('添加文章','{:url('ArticleAdd')}')">
+                    <i class="fa fa-plus"></i> 添加文章
+                </button>
+                <span class="layui-btn-dropdown" style="display:inline-block;">
+                    <button class="layui-btn layui-btn-danger" data-toggle="dropdown"><i class="fa fa-wrench"></i> 批量操作 <i class="fa fa-caret-down"></i></button>
+                    <ul class="layui-dropdown-menu layui-anim layui-anim-upbit">
+                        <li><a href="javascript:;" class="layuiBtn" data-type="getCheckData"><i class="fa fa-trash-o"></i> 批量删除 </a></li>
+                    </ul>
+                </span>
+            </div>
+        </div>
+
+        <div class="layui-card-body">
+            <table id="LAY-table-manage" lay-filter="LAY-table-manage"></table>
+            <!--状态模板-->
+            <script type="text/html" id="staBar">
+                <input type="checkbox" value="{{d.id}}"  lay-skin="switch"  lay-text="ON|OFF" lay-filter="OnOff"{{d.status == 1 ? 'checked' : '' }}  >
+            </script>
+            <!--图片模板-->
+            <script type="text/html" id="imgTpl">
+                <ul class="layui-cricle">
+                    <li><img src="{{d.cover}}" class="layui-table-img layui-circle"/></li>
+                    <li style="display:none;"><img src="{{d.cover}}"></li>
+                </ul>
+            </script>
+            <!--推荐状态模板-->
+            <script type="text/html" id="tuiBar">
+                <input type="checkbox" value="{{d.id}}"  lay-skin="switch"  lay-text="ON|OFF" lay-filter="is_tui"{{d.is_tui == 1 ? 'checked' : '' }}  >
+            </script>
+            <!--操作模板-->
+            <script type="text/html" id="opeBar">
+                <a onclick="wk.layer_show('编辑文章','{:url('ArticleEdit')}?id={{d.id}}')" class="layui-btn layui-btn-xs" title="编辑"><i class="fa fa-pencil"></i></a>
+                <a href="javascript:;" onclick="wk.confirm('{{d.id}}','{:url('ArticleDelete')}')" class="layui-btn layui-btn-danger layui-btn-xs" title="删除"><i class="fa fa-trash-o"></i></a>
+            </script>
+        </div>
+    </div>
+</div>
+{include file="public/footer" /}
+<script>
+
+    layui.use(['index', 'table','util'], function () {
+        var $ = layui.$
+            , form = layui.form
+            , table = layui.table
+        table.render({
+            elem: '#LAY-table-manage'
+            , url: '{:url("Article/index")}'
+            ,response: {
+                statusCode:0 //成功的状态码，默认：0
+            }
+            , page: true
+            , even: false //开启隔行背景
+            , size: 'lg' //sm小尺寸的表格 lg大尺寸
+            // ,width:100
+            , cellMinWidth: 150
+            , height: "full-220"
+            , limits: [10, 20, 30, 40, 50]
+            , limit: "{:config('pages')}"
+            , loading: true
+            , id: 'LAY-table'
+            , cols: [[
+                {type: 'checkbox', fixed: 'left',}
+                , {field: 'id', width: 60, title: 'ID', sort: true, align: 'center'}
+                , {field: 'title', width: '', title: '标题', align: 'center',edit: 'text'}
+                , {field: 'sort',  width:100, title: '排序', sort: true, align: 'center',edit:'text'}
+                , {field: 'type',  width:100, title: '所属模块', align: 'center'}
+                , {field: 'digest', width:'', title: '摘要', align: 'center',edit:'text'}
+                , {field: 'writer', width: '', title: '作者', align: 'center',edit: 'text'}
+                , {field: 'cover', width:'', title: '封面', align: 'center',templet: '#imgTpl'}
+                , {field: 'create_time', width: '', title: '创建时间',sort: true, align: 'center',templet:"<div>{{layui.util.toDateString(d.create_time,'yyyy年MM月dd日')}}</div>"}
+                , {field: 'is_tui',fixed: 'right', width: 100, title: '顶部推荐',sort: true, align: 'center', templet: '#tuiBar'}
+                , {field: 'status',fixed: 'right', width: 100, title: '状态',sort: true, align: 'center', templet: '#staBar'}
+                , {fixed: 'right', width: 120, title: '操作', align: 'center', toolbar: '#opeBar'}
+            ]]
+            ,done: function (res, curr, count) {
+                $('.layui-cricle').viewer({
+                    url: 'data-original',
+                });
+            }
+        });
+        //监听状态开关操作
+        form.on('switch(OnOff)', function (obj) {
+            var num = '';
+            obj.elem.checked == true? num = 1: num = 0;
+            //用户状态
+            wk.status(this.value,num, '{:url("ArticleStatus")}',obj);
+        });
+
+
+        //监听推荐状态开关
+        form.on('switch(is_tui)', function (obj) {
+            var num = '';
+            obj.elem.checked == true? num = 1: num = 0;
+            //用户状态
+            wk.status(this.value,num, '{:url("ArticleTuiStatus")}',obj);
+        });
+
+        //行内式编辑
+        table.on('edit(LAY-table-manage)', function (obj) {
+            var value = obj.value;//修改后的数据
+            var field = obj.field;//修改的字段名
+            var id = obj.data.id;//修改的当行数据
+            //获取修改行的ID值
+            $.post('{:url("ArticleTableEdit")}', { id:id, value: value, field: field },function (res) {
+                if (res.code==200) {
+                    layer.msg(res.msg, {icon: 1, time: 1500, shade: 0.1});
+                    $(".layui-laypage-btn").click();
+                }else{
+                    layer.msg(res.msg, {icon: 2, time: 1500, shade: 0.1});
+                }
+            });
+        });
+
+
+        //事件
+        var active = {
+            getCheckData: function(){
+                //批量删除
+                wk.batchDel(getIds(),"{:url('BatchDelete')}");
+            }
+            ,forbiddenAll: function(){
+                //批量禁用
+                wk.batchForbidden(getIds(),2,"{:url('forbiddenAdmin')}");
+            }
+            ,usingAll: function(){
+                //批量启用
+                wk.usingAll(getIds(),1,"{:url('usingAdmin')}");
+            }
+            ,excelAll: function(){
+                //导出Excel
+                wk.excelAll(getIds(),$("form").serialize(),"{:url('excelAdmin')}");
+            }
+        };
+
+        $('.layuiBtn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+        var getIds = function () {
+            var ids = [];
+            var checkStatus = table.checkStatus('LAY-table')
+                ,data = checkStatus.data;
+            $.each(data,function(index,item){
+                ids.push(item['id'])
+            });
+            return ids;
+        }
+
+    });
+</script>
+</body>
+</html>

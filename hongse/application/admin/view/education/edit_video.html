@@ -1,0 +1,233 @@
+{include file="public/header" /}
+<body class="gray-bg">
+<div class="layui-fluid layui-col-md12">
+    <div class="layui-card">
+        <div class="layui-card-body layui-form">
+            <div class="layui-row layui-col-space10 layui-form-item ">
+
+                <form action="" id="videoform">
+
+
+
+                    <div class="layui-form-item layui-col-md-offset1 layui-col-md8">
+                        <label class="layui-form-label">标题</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" name="title" id="title" value="{$info.title}" placeholder="文章标题">
+                        </div>
+                    </div>
+
+
+                    <div class="layui-form-item layui-col-md-offset1 layui-col-md8">
+                        <label class="layui-form-label">讲师</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" name="lecturer" id="lecturer" value="{$info.lecturer}" placeholder="讲师">
+                        </div>
+                    </div>
+
+
+
+                    <div class="layui-form-item layui-col-md-offset1 layui-col-md8">
+                        <label class="layui-form-label">所属系列</label>
+                        <div class="layui-input-block">
+                            <select name="category_id" id="category_id" lay-search="">
+                                <option value="">请选择分类</option>
+                                {if !empty($cate)}
+                                {foreach name="cate" item="vo"}
+                                <option value="{$vo.id}" {if condition="$info['category_id'] eq $vo['id']"} selected {/if}>{$vo.title}</option>
+                                {/foreach}
+                                {/if}
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="layui-form-item layui-col-md-offset1 layui-col-md8">
+                        <label class="layui-form-label">上传视频：</label>
+                        <input type="hidden" name="video" id="video" value="{$info.video}">
+                        <div class="layui-input-block">
+                            <div id="lay-upload2">上传视频</div>
+                            <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+                                预览视频：
+                                <div class="layui-upload-list" id="lay-video-list">
+                                </div>
+                                {if condition="$info['video'] neq ''"}
+                                <video src="{$info.video}" width="300" height="200" controls  autoplay></video>
+                                {/if}
+                            </blockquote>
+                        </div>
+                    </div>
+
+
+                    <input type="hidden" name="video_id" value="{$info.id}">
+
+
+                    <div class="layui-form-item layui-col-md-offset1 layui-col-md8">
+                        <label class="layui-form-label">封面图片：</label>
+                        <input name="cover_pic" id="thumb_logo" lay-verify="check_cover_pic"  value="{$info.cover}" type="hidden" />
+                        <div class="layui-input-block">
+                            <div class="input-group col-sm-2">
+                                <button type="button" class="layui-btn" id="cover_pic">
+                                    <i class="layui-icon">&#xe67c;</i>上传图片
+                                </button>
+                                <div id="sm_logo" style="margin-top:10px;">
+                                    <img src="{$info.cover}" style="height: 120px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+                    <div class="layui-form-item layui-col-md-offset1 layui-col-md8">
+                        <div class="layui-input-block">
+                            <button class="layui-btn" type="button" onclick="sub()" lay-submit="" lay-filter="component-form-element">保存
+                            </button>
+                            <button class="layui-btn layui-btn-primary" onclick="wk.layer_close('close')">关闭</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{include file="public/footer" /}
+<script>
+    //上传封面
+    $(document).ready(function(){
+        // 上传图片
+        layui.use('upload', function(){
+            var upload = layui.upload;
+            var topic_id = $("#topic_id").val()
+            //执行实例
+            var uploadInst = upload.render({
+                elem: '#cover_pic' //绑定元素
+                // ,url: "./uploadPic" //上传接口
+                ,url: "{:url('admin/upload/uploadLocality')}" //上传接口
+                ,data: {} //可选项。额外的参数，如：{id: 123, abc: 'xxx'}
+                ,done: function(res){
+                    console.log(res);
+                    //上传完毕回调
+                    $("#thumb_logo").val(res.data);
+                    $("#sm_logo").html('<img src="' + res.data + '" style="height: 120px;"/>');
+                }
+                ,error: function(){
+                    //请求异常回调
+                }
+            });
+        });
+    });
+
+    //上传视频
+    var uploader = WebUploader.create({
+        auto: true,// 选完文件后，是否自动上传。
+        server: "{:url('Upload/upload_video')}",// 文件接收服务端。
+        duplicate :true,// 重复上传文件，true为可重复false为不可重复
+        chunked: true,// 分片上传大文件
+        pick: {
+            id: "#lay-upload2",// 选择文件的按钮
+            multiple: false,//true多文件上传 false单文件上传
+            label: "选择视频"
+        },
+        fileSingleSizeLimit: 200*1024*1024, //限制上传单个文件大小，单位是B，1M=1024000B
+        accept: {
+            title: 'Video',
+            extensions: 'mp4,m4v',
+            mimeTypes: '.mp4,.m4v'
+        },
+        //上传成功
+        'onUploadSuccess': function(file, data, response) {
+            $("#video").val(data._raw);
+            layui.config({
+                base: '/src/' //静态资源所在路径
+            }).extend({
+                ckplayer: 'modules/ckplayer'
+            }).use(['ckplayer'], function() {
+                var ckplayer = layui.ckplayer
+                var videoObject = {
+                    container: '#' + file.id,
+                    loop: false,
+                    autoplay: false,
+                    video: [
+                        [data._raw, 'video/mp4']
+                    ]
+                };
+                var player = new ckplayer(videoObject);
+            })
+            $( '#'+file.id ).show();
+            $( '#'+file.id ).next('div').hide();
+            $( '#'+file.id ).next().next('p').html('<span style="color: #009688;">上传成功!</span>');
+        },
+        //上传失败
+        'uploadError':function(file){
+            $( '#'+file.id ).next('div').hide();
+            $( '#'+file.id ).next().next('p').html('<span style="color: #FF5722;">上传失败!</span>');
+        }
+    });
+    //上传进度
+    uploader.on( 'uploadProgress' ,function(file,percentage){
+        layui.element.progress('lay-video', Math.round(100 * percentage)+'%');
+    });
+    //视频加入队列
+    uploader.on( 'fileQueued', function( file ) {
+        $('#lay-video-list').html('<div id="' + file.id + '" style="width: 80%;height: auto;display:none;"></div><div class="layui-progress layui-progress-big" lay-showpercent="true" lay-filter="lay-video"><div class="layui-progress-bar" lay-percent="0%"></div></div><p id="lay-msg">正在上传... <i class="layui-icon layui-icon-loading-1 layui-icon layui-anim layui-anim-rotate layui-anim-loop"></i></p>')
+    });
+
+    //错误信息提示
+    uploader.on('error', function (code) {
+        switch (code) {
+            case 'F_EXCEED_SIZE':
+                layer.msg('视频大小不得超过'+  uploader.options.fileSingleSizeLimit/1024/1024 + 'MB',{icon:2,time:1500,shade:0.1});
+                break;
+            case 'Q_TYPE_DENIED':
+                layer.msg('请上传正确的视频格式',{icon:2,time:1500,shade:0.1});
+                break;
+            default:
+                layer.msg('上传错误，请刷新',{icon:2,time:1500,shade:0.1});
+                break;
+        }
+    });
+
+    //表单提交
+    function sub() {
+        if($("#category_id").val()==''){
+            layer.msg('选择课程系列')
+            return false;
+        }
+
+        if($("#title").val()==''){
+            layer.msg('标题不能为空')
+            return false;
+        }
+
+        if($("#lecturer").val()==''){
+            layer.msg('讲师不能为空')
+            return false;
+        }
+
+        if($("#video").val()==''){
+            layer.msg('请上传视频')
+            return false;
+        }
+        $.ajax({
+            url: "{:url('EditVideo')}",
+            type: 'post',
+            dataType: 'json',
+            data: $("#videoform").serialize(),
+            success: function (res) {
+                if (res.code == 200) {
+                    layer.msg(res.msg, {icon: 1, time: 1500, shade: 0.1}, function (index) {
+                        wk.layer_close();
+                    })
+                } else {
+                    $(".layui-btn").removeClass('layui-disabled').removeAttr('disabled');
+                    wk.error(res.msg);
+                    return false;
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

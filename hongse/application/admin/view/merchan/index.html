@@ -1,0 +1,214 @@
+{include file="public/header" /}
+<style>
+    .layui-table-view .layui-table[lay-size=lg] .layui-table-cell {height: 58px;line-height: 58px;}
+    .wx-audio-content{padding:0px;border:0px;}
+    .wx-audio-content .wx-audio-left .wx-audio-state{margin-bottom:15px;}
+    .wx-audio-content .wx-audio-right .wx-audio-time{padding-top:0px;position: relative;bottom:6px;}
+    .wx-audio-content .wx-audio-right .wx-audio-progrees{top:6px;}
+    #demoReload{
+        position: absolute;
+        right:-100px;
+    }
+    #empty{
+        position: absolute;
+        right: -170px;
+        top:0;
+    }
+
+    
+    
+   
+    
+</style>
+<body>
+<div class="layui-fluid">
+    <div class="layui-card" >
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto" style="height: 100%;">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <div class="layui-input-inline">
+                        <input type="text" name="start" id="start" class="layui-input"  placeholder="创建开始日期">
+                    </div>
+                    <div class="layui-form-mid">
+                    </div>
+                    <div class="layui-input-inline">
+                        <input type="text" name="end" id="end" class="layui-input"  placeholder="创建结束日期">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-inline">
+                        <input type="text" id="key" class="layui-input" name="key" placeholder="关键字"/>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-inline">
+                        <button class="layui-btn" lay-submit="" id="demoReload" lay-filter="LAY-search">立即搜索</button>
+                        <input type="number" class="layui-input" title="数据条数" placeholder="输入导出的数据条数" id="number">                        
+                    </div>
+                </div>
+            </div>
+            <div>
+                <script type="text/html" id="opeBar1">
+                
+                    <button class="layui-btn" data-type="add" lay-event="excel" id="excel">
+                        <i class="fa fa-plus"></i> 导出
+                    </button>
+                </script>
+           
+            </div>
+           
+        <div class="layui-card-body">
+             <!-- layui表格 -->
+            <table id="LAY-table-manage" lay-filter="LAY-table-manage" ></table>
+            <!--图片模板-->
+            <script type="text/html" id="imgTpl">
+                <ul class="layui-cricle">
+                    <li><img src="{{d.goods_img}}" class="layui-table-img layui-circle" onerror="this.src='/static/admin/images/timg.jpg'" /></li>
+                            <li style="display:none;"><img src="{{d.goods_img}}" onerror="this.src='/static/admin/images/timg.jpg'" ></li>
+                </ul>
+            </script>
+            <!--操作模板-->
+            <script type="text/html" id="opeBar">
+                <a href="javascript:;" onclick="del('{{d.id}}')" class="layui-btn layui-btn-danger layui-btn-xs" title="删除"><i class="fa fa-trash-o"></i></a>
+            </script>
+        </div>
+    </div>
+</div>
+{include file="public/footer" /}
+<script>
+    layui.use(['index', 'table','util'], function () {
+        
+        var $ = layui.$
+            , form = layui.form
+            , table = layui.table
+        table.render({
+              elem: '#LAY-table-manage'
+            , url: '{:url("merchandise/layInterface")}'
+            ,response: {
+                statusCode: 200 //成功的状态码，默认：0
+            }
+            , page: true
+            , even: false //开启隔行背景
+            , size: 'lg' //sm小尺寸的表格 lg大尺寸
+            , cellMinWidth: 150
+            , height: "full-145"
+            , limits: [10, 20, 30, 40, 50]
+            , limit: "{:config('pages')}"
+            , loading: true
+            , id: 'LAY-table' 
+            ,toolbar: '#opeBar1'//开启自定义工具行，指向自定义工具栏模板选择器
+            , cols: [[
+                {type: 'checkbox', fixed: 'left',}
+                , {field: 'id', width: 80, title: 'ID', sort: true, align: 'center'}
+                , {field: 'goods_name', width: '150', title: '商品名称', align: 'center'}
+                , {field: 'sort_order', width: 100, title: '排序',  align: 'center'}
+                , {field: 'goods_img', width: 180, title: '商品图片', align: 'center',templet: '#imgTpl'} 
+                , {field: 'goods_desc', width: 300, title: '商品介绍',align: 'center'}
+                , {field: 'goods_sn', width: 200, title: '商品序列'}
+                , {field: 'price', width: 150, title: '商品价格',  align: 'center'}
+                , {field: 'add_time', width: 180, title: '添加时间',sort: true, align: 'center'}
+                , {fixed: 'right', width: 200, title: '操作', align: 'center', toolbar: '#opeBar'}
+            ]]
+            ,done: function (res, curr, count) {
+                $('.layui-cricle').viewer({
+                    url: 'data-original',
+                });
+              
+            }
+           
+        });
+
+        table.on('toolbar(LAY-table-manage)', function (obj) {
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch (obj.event) {
+                case 'excel':
+                var start = document.getElementById('start').value;
+                var end   = document.getElementById('end').value;
+                var keyword = document.getElementById('key').value;
+                var num = document.getElementById('number').value;
+                // if(num<=0){
+                //   layer.msg("您输入的条数不规范！");
+                //   return false;
+                // }
+                window.location.href = "{:url('merchandise/excelall')}?key= " + keyword + '&start=' + start + '&end=' + end +'&num='+num;
+                    break;
+                case '11':
+                    
+                case 'isAll':
+                    
+                    break;
+            }
+        });
+        
+  
+      
+            //数据表重载 发送值
+        var $ = layui.$, active = {
+            reload: function(){
+                var demoReload = $('#LAY-table');
+                var start = $('#start');
+                var  end = $('#end');
+                //执行重载
+                table.reload('testReload', {
+                     url:"{:url('merchandise/layInterface')}"
+                    ,page: {
+                        curr: 1,
+                          }
+                    ,where: {
+                        key: {
+                            keyword: demoReload.val(),
+                            start:start.val(),
+                            end:end.val(),
+                        }
+                    }
+                }, 'data');
+            }
+        };
+            $('.demoTable #demoReload').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+          });
+        });
+   
+  
+  
+
+
+//日期选择
+layui.use('laydate', function(){
+var laydate = layui.laydate;
+laydate.render({
+  elem: '#start'
+})
+laydate.render({
+  elem: '#end'
+})
+
+});
+
+
+    //删除
+    function del(id){
+        layer.confirm('确定要删除?', {icon: 3, title:'提示'}, function(index){
+        $.ajax({
+                url:"{:url('Merchandise/shopdel')}",
+                type:'post',
+                dataType:'json',
+                data:{id},
+                success:function(res){
+                    if (res.code == 200) {
+                        layer.msg(res.msg,{icon:1,time:1500,shade:0.1},function(index){
+                              history.go(0);//刷新当前
+                        })
+                    } else {
+                        $(".layui-btn").removeClass('layui-disabled').removeAttr('disabled');
+                        wk.error(res.msg);
+                        return false;
+                    }
+                }
+            })
+          }
+        )}
+</script>
+</body>
+</html>

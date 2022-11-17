@@ -1,0 +1,115 @@
+{include file="public/header" /}
+<style>
+    .layui-table-view .layui-table[lay-size=lg] .layui-table-cell {height: 58px;line-height: 58px;}
+    .wx-audio-content{padding:0px;border:0px;}
+    .wx-audio-content .wx-audio-left .wx-audio-state{margin-bottom:15px;}
+    .wx-audio-content .wx-audio-right .wx-audio-time{padding-top:0px;position: relative;bottom:6px;}
+    .wx-audio-content .wx-audio-right .wx-audio-progrees{top:6px;}
+</style>
+<body>
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <div class="layui-input-inline">
+                        <input type="text" name="start" class="layui-input" onclick="wk.lay_date(this);" placeholder="创建开始日期">
+                    </div>
+                    <div class="layui-form-mid">
+                        -
+                    </div>
+                    <div class="layui-input-inline">
+                        <input type="text" name="end" class="layui-input" onclick="wk.lay_date(this);" placeholder="创建结束日期">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-inline">
+                        <input type="text" id="key" class="layui-input" name="key" placeholder=""/>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <div class="layui-input-inline">
+                        <button class="layui-btn" lay-submit="" lay-filter="LAY-search">立即搜索</button>
+                        <button  class="layui-btn layui-btn-normal" id="empty"  lay-submit="" lay-filter="LAY-search">重置</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-card-body">
+            <table id="LAY-table-manage" lay-filter="LAY-table-manage"></table>
+
+            <!--图片模板-->
+            <script type="text/html" id="imgTpl">
+                <ul class="layui-cricle">
+                    <li><img src="{{d.images[0]}}" class="layui-table-img layui-circle"onerror="this.src='/static/admin/images/timg.jpg'" /></li>
+                    {{# if(d.images.length >= 1){ }}
+                    {{# for(var i=1;i<d.images.length;i++){  }}
+                    <li style="display:none;"><img src="{{d.images[i]}}" onerror="this.src='/static/admin/images/timg.jpg'" ></li>
+                    {{# } }}
+                    {{# } }}
+                </ul>
+            </script>
+            <!--状态模板-->
+            <script type="text/html" id="staBar">
+                <input type="checkbox" value="{{d.id}}"  lay-skin="switch"  lay-text="ON|OFF" lay-filter="OnOff"{{d.status == 1 ? 'checked' : '' }}  >
+            </script>
+            <!--操作模板-->
+            <script type="text/html" id="opeBar">
+                <a onclick="wk.layer_show('编辑','{:url('Edit')}?id={{d.id}}')" class="layui-btn layui-btn-xs" title="编辑"><i class="fa fa-pencil"></i></a>
+            </script>
+        </div>
+    </div>
+</div>
+{include file="public/footer" /}
+<script>
+
+    layui.use(['index', 'table','util'], function () {
+        var $ = layui.$
+            , form = layui.form
+            , table = layui.table
+        table.render({
+            elem: '#LAY-table-manage'
+            , url: '{:url("cloud/index")}'
+            ,response: {
+                statusCode:0 //成功的状态码，默认：0
+            }
+            , page: true
+            , even: false //开启隔行背景
+            , size: 'lg' //sm小尺寸的表格 lg大尺寸
+            // ,width:100
+            , cellMinWidth: 150
+            , height: "full-220"
+            , limits: [10, 20, 30, 40, 50]
+            , limit: "{:config('pages')}"
+            , loading: true
+            , id: 'LAY-table'
+            , cols: [[
+                {type: 'checkbox', fixed: 'left',}
+                , {field: 'id', width: 60, title: 'ID', sort: true, align: 'center'}
+                , {field: 'title', width:'', title: '标题', align: 'center'}
+                , {field: 'url', width:'', title: '跳转链接', align: 'center'}
+                , {field: 'title_content', width: '', title: '标题内容', align: 'center'}
+                , {field: 'describe', width: '', title:'描述', align: 'center'}
+                , {field: 'images', width:'', title: 'banner', align: 'center',templet: '#imgTpl'}
+                , {field: 'create_time', width: '', title: '添加时间', align: 'center'}
+                , {field: 'status',fixed: 'right', width: 100, title: '状态',sort: true, align: 'center', templet: '#staBar'}
+                , {fixed: 'right', width: 150, title: '操作', align: 'center', toolbar: '#opeBar'}
+            ]]
+            ,done: function (res, curr, count) {
+                $('.layui-cricle').viewer({
+                    url: 'data-original',
+                });
+            }
+        });
+
+        form.on('switch(OnOff)', function (obj) {
+            var num = '';
+            obj.elem.checked == true? num = 1: num = 0;
+            //用户状态
+            wk.status(this.value,num, '{:url("Status")}',obj);
+        });
+    });
+</script>
+</body>
+</html>

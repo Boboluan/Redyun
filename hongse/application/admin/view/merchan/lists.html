@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/static/admin/lib/layui/css/layui.css"  media="all">
+    <link rel="shortcut icon" href="/static/hadmin/favicon.ico" type="image/x-icon" />
+    <script type="text/javascript" src="/static/hadmin/js/xadmin.js"></script>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <style>
+        #start{
+            position: absolute;
+            right: -200px;
+            top: 0;
+        }
+        #end{
+            position: absolute;
+            right: -400px;
+            top: 0;
+        }
+        #search{
+            position: absolute;
+            right: 590px;
+        }
+
+        .layui-table-cell {
+            height: auto !important;
+            white-space: normal;
+        }
+
+    </style>
+</head>
+<body>
+<!--添加弹出层div-->
+<div class="x-body layui-anim layui-anim-up" style="display: none" id="add">
+    <form class="layui-form" id="myform">
+        <div class="layui-form-item">
+            <label for="L_email" class="layui-form-label">
+                <span class="x-red">*</span>邮箱
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="L_email" name="email" required lay-verify="email"
+                       autocomplete="off" class="layui-input" >
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="L_username" class="layui-form-label">
+                <span class="x-red">*</span>昵称
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="L_username" name="name" required lay-verify="nikename"
+                       autocomplete="off" class="layui-input" >
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="L_username" class="layui-form-label">
+                <span class="x-red">*</span>电话
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="L_phone" name="phone"
+                       autocomplete="off" class="layui-input" >
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="L_username" class="layui-form-label">
+                <span class="x-red">*</span>地址
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="L_address" name="address" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+
+
+        <div class="layui-card layui-form" lay-filter="component-form-element" style="margin-left:50px;">
+            <div class="layui-card-header">性别</div>
+            <div class="layui-card-body layui-row layui-col-space10">
+                <div class="layui-col-md12" style="margin-left:50px">
+                    <input type="radio" name="sex" value="男" title="男" checked>
+                    <input type="radio" name="sex" value="女" title="女">
+                </div>
+            </div>
+        </div>
+
+
+        <input type="hidden" name="id">
+        <div class="layui-card layui-form" lay-filter="component-form-element" style="margin-left:50px">
+            <div class="layui-card-header">状态</div>
+            <div class="layui-card-body layui-row layui-col-space10">
+                <div class="layui-col-md12" style="margin-left: 50px">
+                    <input type="radio" name="status" value="1" title="启用" checked>
+                    <input type="radio" name="status" value="0" title="禁用">
+                </div>
+            </div>
+        </div>
+
+          <!--上传图片-->
+        <!--************这里添加的隐藏的输入框，用来传递images的参数***************-->
+        <input type="hidden" name="image" class="image">
+        <div class="layui-form-item">
+            <label class="layui-form-label ">图片:</label>
+            <div class="layui-upload">
+                <button type="button" class="layui-btn" id="test1">上传图片</button>
+                <div class="layui-upload-list">
+                    <img class="layui-upload-img" id="demo1">
+                    <p id="demoText"></p>
+                </div>
+            </div>
+        </div>
+      <!--   end     -->
+
+        <div class="layui-form-item">
+            <label for="L_add" class="layui-form-label">
+            </label>
+            <button   type="button" class="layui-btn" lay-filter="edit" onclick="aaa()">
+                保存
+            </button>
+        </div>
+    </form>
+</div>
+<!--end-->
+<!--修改弹出层div-->
+<div class="x-body layui-anim layui-anim-up" style="display: none" id="edit">
+    <form class="layui-form" id="formedit">
+        <div class="layui-form-item">
+            <label for="L_email" class="layui-form-label">
+                <span class="x-red">*</span>邮箱
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="email" name="email" required lay-verify="email"
+                       autocomplete="off" class="layui-input" >
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="L_username" class="layui-form-label">
+                <span class="x-red">*</span>昵称
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="username" name="name" required lay-verify="nikename"
+                       autocomplete="off" class="layui-input" >
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="L_username" class="layui-form-label">
+                <span class="x-red">*</span>电话
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="phone" name="phone"
+                       autocomplete="off" class="layui-input" >
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label for="L_username" class="layui-form-label">
+                <span class="x-red">*</span>地址
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="address" name="address" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+
+
+        <div class="layui-card layui-form" lay-filter="component-form-element" style="margin-left:50px;">
+            <div class="layui-card-header">性别</div>
+            <div class="layui-card-body layui-row layui-col-space10">
+                <div class="layui-col-md12" style="margin-left:50px">
+                    <input type="radio" name="sex" value="男" title="男" checked>
+                    <input type="radio" name="sex" value="女" title="女">
+                </div>
+            </div>
+        </div>
+        <input type="hidden" id="ids" name="id" >
+
+        <div class="layui-card layui-form" lay-filter="component-form-element" style="margin-left:50px">
+            <div class="layui-card-header">状态</div>
+            <div class="layui-card-body layui-row layui-col-space10">
+                <div class="layui-col-md12" style="margin-left: 50px">
+                    <input type="radio" name="status" value="1" title="启用" checked>
+                    <input type="radio" name="status" value="0" title="禁用">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="L_repass" class="layui-form-label">
+            </label>
+            <button   type="button" class="layui-btn" lay-filter="edit" onclick="edit()">
+                保存
+            </button>
+        </div>
+    </form>
+</div>
+<!--end-->
+<div class="demoTable">
+        搜索用户：
+        <div class="layui-inline">
+            <input class="layui-input" name="id" id="demoReload" autocomplete="off">
+            <input type="text" class="layui-input" id="start" placeholder="起始时间" autocomplete="off">
+            <input type="text" class="layui-input" id="end" placeholder="截止日期" autocomplete="off">
+        </div>
+        <button class="layui-btn" data-type="reload" id="search">搜索</button>
+    </div>
+
+<table class="layui-hide" id="test" lay-filter="test"></table>
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container" id="tool">
+        <button class="layui-btn layui-btn-sm" lay-event="getCheckData">添加用户</button>
+        <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
+        <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+    </div>
+</script>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script type="text/html" id="switchTpl">
+        <input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="statusDemo">
+    </script>
+<script src="/static/admin/lib/layui/layui.js" charset="utf-8"></script>
+<script src="/static/admin/js/jquery.min.js"></script>
+<script>
+    layui.use('table', function() {
+        var table = layui.table;
+        form = layui.form;
+        var upload = layui.upload;
+        table.render({
+            elem: '#test'
+            , url: "{:url('merchandise/layInterface')}"
+            , toolbar: '#toolbarDemo'
+            , title: '用户数据表'
+            , cols: [[
+                {type: 'checkbox', fixed: 'left'}
+                , {field: 'id', width: 80, title: 'ID', sort: true,}
+                , {field: 'goods_name', width: '150', title: '商品名称', align: 'center'}
+                , {field: 'sort_order', width: 100, title: '排序',  align: 'center'}
+                , {field: 'goods_img', width: 180, title: '商品图片', align: 'center',templet: '#imgTpl'}
+                , {field: 'goods_desc', width: 300, title: '商品介绍',align: 'center'}
+                , {field: 'goods_sn', width: 200, title: '商品序列'}
+                , {field: 'price', width: 150, title: '商品价格',  align: 'center'}
+                , {field: 'add_time', width: 180, title: '添加时间',sort: true, align: 'center',templet:"<div>{{layui.util.toDateString(d.create_time,'yyyy年MM月dd日')}}</div>"}
+                , {fixed: 'right', width: 200, title: '操作', align: 'center', toolbar: '#opeBar'}
+            ]]
+            , page: true,
+              id:'testReload',
+        });
+
+        //工具栏事件
+        table.on('toolbar(test)', function (obj) {
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch (obj.event) {
+                case 'getCheckData':
+                    layer.open({
+                        title: '添加',
+                        type: 1,
+                        move: false,
+                        content: $('#add'),
+                        area: ['50%', '80%'],
+                        resize: false,
+                        scrollbar: false,
+                    });
+                    break;
+                case 'getCheckLength':
+                    var data = checkStatus.data;
+                    layer.msg('选中了：' + data.length + ' 个');
+                    break;
+                case 'isAll':
+                    layer.msg(checkStatus.isAll ? '全选' : '未全选')
+                    break;
+            }
+        });
+        // 删除
+        table.on('tool(test)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'del') {
+                layer.confirm('确定要删除' + data.name + "用户吗?", function (index) {
+                    $.ajax({
+                        type: 'post',
+                        data: {id: obj.data.id},
+                        url: "{:url('adminrole/role_del')}",
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.code == 1) {
+                                layer.msg(data.msg, {icon: 1});
+                                obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                                layer.close(index);
+                            } else {
+                                layer.msg(data.msg, {icon: 5});
+                            }
+                        }
+                    })
+                    layer.close(index);
+                });
+                //编辑
+            } else if (obj.event === 'edit') {
+                $("#email").val(data.email);
+                $("#username").val(data.name);
+                $("#phone").val(data.phone);
+                $("#address").val(data.address);
+                $("#ids").val(data.id);
+                layer.open({
+                    title: '编辑',
+                    type: 1,
+                    move: false,
+                    content: $('#edit'),
+                    area: ['50%', '80%'],
+                    resize: false,
+                    scrollbar: false,
+                });
+            }
+        });
+           //表格重载
+        var $ = layui.$, active = {
+            reload: function(){
+                var demoReload = $('#demoReload');
+                var start = $('#start');
+                var  end = $('#end');
+                //执行重载
+                table.reload('testReload', {
+                     url:"{:url('adminrole/box')}"
+                    ,page: {
+                        curr: 1, //重新从第 1 页开始
+                          }
+                    ,where: {
+                        key: {
+                            username: demoReload.val(),
+                            start:start.val(),
+                            end:end.val(),
+                        }
+                    }
+                }, 'data');
+            }
+        };
+        $('.demoTable .layui-btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+        //监听状态操作
+        form.on('switch(statusDemo)', function(obj){
+              $.ajax({
+                      type:'post',
+                      dataType:'json',
+                      url:"{:url('adminrole/status')}",
+                      data:{id:this.value,status:obj.elem.checked},//当前的id和当前状态
+                      success:function (data) {
+                       if(data.code==1){
+                           layer.msg(data.msg,{icon:1});
+                       }else{
+                           layer.msg(data.msg,{icon:5});
+                       }
+                  }
+              })
+         });
+         //上传图片
+        layui.use('upload', function() {
+            var $ = layui.jquery
+                , upload = layui.upload;
+            layui.use('upload', function(){
+                var $ = layui.jquery
+                    ,upload = layui.upload;
+                //普通图片上传
+                var uploadInst = upload.render({
+                    elem: '#test1'
+                    ,url: "{:url('adminrole/add_fun')}"
+                    ,accept:'image'
+                    ,size:50000
+                    ,before: function(obj){
+                        obj.preview(function(index, file, result){
+                            $('#demo1').attr('src', result);
+                        });
+                    }
+                    ,done: function(res){
+                        //如果上传失败
+                        if(res.code > 0){
+                            return layer.msg('上传失败');
+                        }
+                        //上传成功
+                        var demoText = $('#demoText');
+                        demoText.html('<span style="color: #4cae4c;">上传成功</span>');
+
+                        var fileupload = $(".image");
+                        fileupload.attr("value",res.data.src);
+                        console.log(fileupload.attr("value"));
+                    }
+                    ,error: function(){
+                        //演示失败状态，并实现重传
+                        var demoText = $('#demoText');
+                        demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                        demoText.find('.demo-reload').on('click', function(){
+                            uploadInst.upload();
+                        });
+                    }
+                });
+            });
+
+        });
+
+    });
+</script>
+<script>
+  //时间选择器
+  layui.use('laydate', function(){
+      var laydate = layui.laydate;
+   //起始时间
+      laydate.render({
+          elem: '#start'
+      });
+
+      laydate.render({
+          elem: '#end'
+      });
+});
+</script>
+<script>
+    function aaa(){
+        $.ajax({
+            type:"post",
+            dataType:"json",
+            data:$("#myform").serialize(),
+            url:"{:url('adminrole/add_fun')}",
+            success:function(res){
+                console.log(res);
+                if (res.code==1){
+                    layer.msg(res.msg,{ icon: 1, time: 2000},function (){window.location="{:url('adminrole/lists')}"});
+                }else{
+                    layer.msg(res.msg,{ icon: 1, time: 2000},function (){window.location="{:url('adminrole/lists')}"});
+                }
+            }
+        })
+    }
+</script>
+<script>
+    function edit(){
+        $.ajax({
+            type:"post",
+            dataType:"json",
+            data:$("#formedit").serialize(),
+            url:"{:url('adminrole/edit_fun')}",
+            success:function(res){
+                console.log(res);
+                if (res.code==1){
+                    layer.msg(res.msg,{ icon: 1, time: 2000},function (){window.location="{:url('adminrole/lists')}"});
+                }else{
+                    layer.msg(res.msg,{ icon: 1, time: 2000},function (){window.location="{:url('adminrole/lists')}"});
+                }
+            }
+        })
+    }
+</script>
+<!--数据表格显示图片-->
+<script type="text/html" id="imgtmp"><img src="{d.img}"></script>
+</body>
+</html>

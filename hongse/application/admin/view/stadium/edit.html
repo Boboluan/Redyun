@@ -1,0 +1,264 @@
+{include file="public/header" /}
+<body class="gray-bg">
+<div class="layui-fluid layui-col-md12">
+    <div class="layui-card">
+
+        <div class="layui-card-body layui-form">
+            <div class="layui-row layui-col-space10 layui-form-item ">
+
+                <form action="" id="stadiumform">
+
+                    <div class="layui-form-item layui-col-md-offset1 layui-col-md8">
+                        <label class="layui-form-label">内容：</label>
+                        <div class="layui-input-block" >
+                            <textarea name="content" id="LAY_editor2"  placeholder="文章描述">{$stadium.building_describe}</textarea>
+                        </div>
+                    </div>
+
+
+                    <div class="layui-form-item layui-col-md-offset1 layui-col-md8">
+                        <label class="layui-form-label">场馆地区</label>
+                        <div class="layui-input-inline">
+                            <select name="province" lay-search="" id="province" lay-filter="province">
+                                <option value="">---- 请选择省----</option>
+                                {foreach name="province" item="vo"}
+                                <option value="{$vo.id}" {if condition="$stadium['province'] eq $vo['id']"} selected {/if}>{$vo.name}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                        <div class="layui-input-inline">
+                            <select name="city" lay-search=""  id="city" lay-filter="city">
+
+                            </select>
+                        </div>
+                    </div>
+
+
+
+
+                    <div class="layui-form-item layui-col-md-offset1 layui-col-md8">
+                        <label class="layui-form-label">封面图片：</label>
+                        <input name="cover_pic" id="thumb_logo" lay-verify="check_cover_pic"  value="{$stadium.cover}" type="hidden" />
+                        <div class="layui-input-block">
+                            <div class="input-group col-sm-2">
+                                <button type="button" class="layui-btn" id="cover_pic">
+                                    <i class="layui-icon">&#xe67c;</i>上传图片
+                                </button>
+                                <div id="sm_logo" style="margin-top:10px;">
+                                    <img src="{$stadium.cover}" style="height: 120px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--多图上传-->
+<!--                    <div class="layui-form-item layui-col-md-offset1 layui-col-md8">-->
+<!--                        <label class="layui-form-label">其他图片</label>-->
+<!--                        <div class="layui-input-block">-->
+<!--                            <input type="hidden" name="otherimg" id="photo" value="{$stadium.otherimg}" lay-verify="image">-->
+<!--                            <input type="hidden" id="hid" value="{$stadium.otherimg}">-->
+<!--                            <div id="uploader" class="container">-->
+<!--                                <div class="queueList">-->
+<!--                                    <div class="placeholder">-->
+<!--                                        <div id="filePicker"></div>-->
+<!--                                        <p>或将照片拖到这里</p>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                                <div class="statusBar" style="display:none;">-->
+<!--                                    <div class="layui-progress layui-progress-big active" lay-showpercent="true">-->
+<!--                                        <div class="layui-progress-bar layui-bg-blue" lay-percent="0%">-->
+<!--                                        </div>-->
+<!--                                        <span></span>-->
+<!--                                    </div>-->
+<!--                                    <div class="info"></div>-->
+<!--                                    <div class="btns">-->
+<!--                                        <div id="goPicker" class="filePicker2"></div>-->
+<!--                                        <div class="uploadBtn">开始上传</div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+
+
+
+
+                    <div class="layui-form-item layui-col-md-offset1 layui-col-md8">
+                        <label class="layui-form-label">场馆外景</label>
+                        <div class="layui-input-block">
+                            <input type="hidden" name="outer_img" id="photo" lay-verify="image" value="{$stadium.outer_img}">
+                            <input type="hidden" name="del" id="del" value="">
+                            <input type="hidden" id="hid" value="{$stadium.outer_img}">
+                            <div id="uploader" class="container">
+                                <div class="queueList">
+                                    <div class="placeholder">
+                                        <div id="filePicker"></div>
+                                        <p>或将照片拖到这里</p>
+                                    </div>
+                                </div>
+                                <div class="statusBar" style="display:none;">
+                                    <div class="layui-progress layui-progress-big active" lay-showpercent="true">
+                                        <div class="layui-progress-bar layui-bg-blue" lay-percent="0%">
+                                        </div>
+                                        <span></span>
+                                    </div>
+                                    <div class="info"></div>
+                                    <div class="btns">
+                                        <div id="goPicker" class="filePicker2"></div>
+                                        <div class="uploadBtn">开始上传</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="layui-form-item layui-col-md-offset1 layui-col-md8">
+                        <label class="layui-form-label">场馆内景</label>
+                        <div class="layui-input-block">
+                            <input type="hidden" name="inside_img" id="photo1" lay-verify="image" value="{$stadium.inside_img}">
+                            <input type="hidden" name="del" id="del1" value="">
+                            <input type="hidden" id="hid1" value="{$stadium.inside_img}">
+                            <div id="uploader1" class="container">
+                                <div class="queueList">
+                                    <div class="placeholder">
+                                        <div id="filePicker1"></div>
+                                        <p>或将照片拖到这里</p>
+                                    </div>
+                                </div>
+                                <div class="statusBar" style="display:none;">
+                                    <div class="layui-progress layui-progress-big active" lay-showpercent="true">
+                                        <div class="layui-progress-bar layui-bg-blue" lay-percent="0%">
+                                        </div>
+                                        <span></span>
+                                    </div>
+                                    <div class="info"></div>
+                                    <div class="btns">
+                                        <div id="goPicker1" class="filePicker2"></div>
+                                        <div class="uploadBtn">开始上传</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <input type="hidden" name="id" value="{$stadium.id}">
+
+                </form>
+                <div class="layui-form-item layui-col-md-offset1 layui-col-md8">
+                    <div class="layui-input-block">
+                        <button type="button"  class="layui-btn" lay-submit="" lay-filter="sub">保存
+                        </button>
+                        <button class="layui-btn layui-btn-primary" onclick="wk.layer_close('close')">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{include file="public/footer" /}
+
+<script>
+    //js 获取并选中数据库的值
+    $(function (){
+        var cityid = "{$stadium.city}";
+        var html = "<option value=''>选择城市</option>";
+        var citydata = {$citydata};
+        for (i = 0;i<citydata.length;i++){
+            var c_id = citydata[i].id;
+            var c_name = citydata[i].name;
+            if ( cityid == c_id){
+                html += "<option value='" + c_id + "' selected='selected'>" + c_name + "</option>";
+            }else{
+                html += "<option value='" + c_id + "' >" + c_name + "</option>";
+            }
+        }
+        $('#city').html(html);
+    });
+
+
+    $(document).ready(function(){
+        // 上传图片
+        layui.use('upload', function(){
+            var upload = layui.upload;
+            var topic_id = $("#topic_id").val()
+            //执行实例
+            var uploadInst = upload.render({
+                elem: '#cover_pic' //绑定元素
+                // ,url: "./uploadPic" //上传接口
+                ,url: "{:url('admin/upload/uploadLocality')}" //上传接口
+                ,data: {} //可选项。额外的参数，如：{id: 123, abc: 'xxx'}
+                ,done: function(res){
+                    console.log(res);
+                    //上传完毕回调
+                    $("#thumb_logo").val(res.data);
+                    $("#sm_logo").html('<img src="' + res.data + '" style="height: 120px;"/>');
+                }
+                ,error: function(){
+                    //请求异常回调
+                }
+            });
+        });
+    });
+
+
+    //百度富文本编辑器
+    var editor = UE.getEditor('LAY_editor2', {
+        initialFrameHeight:450,
+        autoHeight: false,
+        autoHeightEnabled:false,
+        autoFloatEnabled:false
+    });
+
+
+
+    //提交表单
+    layui.use(['form','element'], function() {
+        var form = layui.form
+            , layedit = layui.layedit
+            , upload = layui.upload
+            , element = layui.element
+
+        form.on('submit(sub)', function (data) {
+            $('.layui-btn').addClass('layui-disabled').attr('disabled','disabled');
+            $.ajax({
+                url:"{:url('StadiumEdit')}",
+                type:'post',
+                dataType:'json',
+                data:data.field,
+                success:function(res){
+                    if (res.code == 200) {
+                        layer.msg(res.msg,{icon:1,time:1500,shade:0.1},function(index){
+                            wk.layer_close();
+                        })
+                    } else {
+                        $(".layui-btn").removeClass('layui-disabled').removeAttr('disabled');
+                        wk.error(res.msg);
+                        return false;
+                    }
+                }
+            })
+        });
+    });
+
+</script>
+
+<script>
+    //
+    var n = wk.uploads({num:3,type:'png,jpg',url:"{:url('admin/upload/uploadLocalityMore')}",size:100,status:'update'});
+    function imgDel(e,obj){
+        wk.uploads_del(e,obj,n,"{:url('admin/upload/deleteLocality')}");
+    }
+</script>
+
+<script>
+    var n1 = wk.uploads({num:4,type:'png,jpg',attr:1,url:"{:url('admin/upload/uploadLocalityMore')}",size:100,status:'update'});
+    function imgDel1(e,obj){
+        wk.uploads_del(e,obj,n1,"{:url('admin/upload/deleteLocality')}");
+    }
+</script>
+</body>
+</html>

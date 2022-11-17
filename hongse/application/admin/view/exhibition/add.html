@@ -1,0 +1,277 @@
+{include file="public/header" /}
+<body class="gray-bg">
+<div class="layui-fluid layui-col-md12">
+    <div class="layui-card">
+
+        <div class="layui-card-body layui-form">
+            <div class="layui-row layui-col-space10 layui-form-item ">
+
+                <form action="" id="articleform">
+
+                    <div class="layui-form-item layui-col-md-offset1 layui-col-md8">
+                        <label class="layui-form-label">标题</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" value="" name="title" lay-verify="required" placeholder="标题">
+                        </div>
+                    </div>
+
+
+
+                    <div class="layui-form-item layui-col-md-offset1 layui-col-md8">
+                        <label class="layui-form-label">副标题</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" value="" name="subtitle"  placeholder="标题">
+                        </div>
+                    </div>
+
+
+
+                    <div class="layui-form-item layui-col-md-offset1 layui-col-md8">
+                        <label class="layui-form-label">举办场馆</label>
+                        <div class="layui-input-inline">
+                            <select name="stadium_id" lay-search=""   id="stadium_id" >
+                                <option value="">----搜索或选择场馆 ----</option>
+                                {foreach name="Stadium" item="vo"}
+                                <option value="{$vo.id}" >{$vo.building_name}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+
+
+
+
+                    <div class="layui-form-item layui-col-md-offset1 layui-col-md10">
+                        <label class="layui-form-label">推荐展览一</label>
+                        <div class="layui-input-inline">
+                            <select name="recommendList_one" lay-search="" id="">
+                                <option value="">----搜索或选择场馆 ----</option>
+                                {foreach name="ExhibitionList" item="vo"}
+                                <option value="{$vo.id}">{$vo.title}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item layui-col-md-offset1 layui-col-md10">
+                        <label class="layui-form-label">推荐展览二</label>
+                        <div class="layui-input-inline">
+                            <select name="recommendList_two" lay-search="" id="">
+                                <option value="">----搜索或选择场馆 ----</option>
+                                {foreach name="ExhibitionList" item="vo"}
+                                <option value="{$vo.id}">{$vo.title}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item layui-col-md-offset1 layui-col-md10">
+                        <label class="layui-form-label">推荐展览三</label>
+                        <div class="layui-input-inline">
+                            <select name="recommendList_three" lay-search="" id="">
+                                <option value="">----搜索或选择场馆 ----</option>
+                                {foreach name="ExhibitionList" item="vo"}
+                                <option value="{$vo.id}">{$vo.title}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="layui-form-item layui-col-md-offset1 layui-col-md8">
+                        <label class="layui-form-label">展览日期</label>
+                        <div class="layui-inline">
+                            <div class="layui-input-inline">
+                                <input type="text" name="start_time" class="layui-input" id="start_time" placeholder="开始日期">
+                            </div>
+                            <div class="layui-form-mid">
+                                -
+                            </div>
+                            <div class="layui-input-inline">
+                                <input type="text" name="end_time" class="layui-input" id="end_time" placeholder="结束日期">
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                    <div class="layui-form-item layui-col-md-offset1 layui-col-md8">
+                        <div class="layui-form-item layui-form-text">
+                            <label class="layui-form-label">介绍</label>
+                            <div class="layui-input-block">
+                                <textarea placeholder="请输入内容" name="describe" class="layui-textarea"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="layui-form-item layui-col-md-offset1 layui-col-md8">
+                        <label class="layui-form-label">展览封面</label>
+                        <div class="layui-input-block">
+                            <input type="hidden" name="cover" id="photo" lay-verify="image">
+                            <div id="uploader" class="container">
+                                <div class="queueList">
+                                    <div class="placeholder">
+                                        <div id="filePicker"></div>
+                                        <p>或将照片拖到这里</p>
+                                    </div>
+                                </div>
+                                <div class="statusBar" style="display:none;">
+                                    <div class="layui-progress layui-progress-big active" lay-showpercent="true">
+                                        <div class="layui-progress-bar layui-bg-blue" lay-percent="0%">
+                                        </div>
+                                        <span></span>
+                                    </div>
+                                    <div class="info"></div>
+                                    <div class="btns">
+                                        <div id="goPicker" class="filePicker2"></div>
+                                        <div class="uploadBtn">开始上传</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="layui-form-item layui-col-md-offset1 layui-col-md8">
+                        <label class="layui-form-label">展览序章图：</label>
+                        <input name="insideimg" id="thumb_logo" lay-verify="check_cover_pic"  value="" type="hidden" />
+                        <div class="layui-input-block">
+                            <div class="input-group col-sm-2">
+                                <button type="button" class="layui-btn" id="cover_pic">
+                                    <i class="layui-icon">&#xe67c;</i>上传图片
+                                </button>
+                                <div id="sm_logo" style="margin-top:10px;">
+                                    <img src="" style="height: 120px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="layui-form-item layui-col-md-offset1 layui-col-md8">
+                        <label class="layui-form-label">是否显示序章</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="insideimg_status" value="1" title="是" >
+                            <input type="radio" name="insideimg_status" value="0" title="否" checked>
+                        </div>
+                    </div>
+
+                </form>
+                <div class="layui-form-item layui-col-md-offset1 layui-col-md8">
+                    <div class="layui-input-block">
+                        <button type="button" onclick="sub()" class="layui-btn" lay-submit="" lay-filter="sub">保存
+                        </button>
+                        <button class="layui-btn layui-btn-primary" onclick="wk.layer_close('close')">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{include file="public/footer" /}
+
+<script>
+    //上传封面图片
+    $(document).ready(function(){
+        // 上传图片
+        layui.use('upload', function(){
+            var upload = layui.upload;
+            var topic_id = $("#topic_id").val()
+            //执行实例
+            var uploadInst = upload.render({
+                elem: '#cover_pic' //绑定元素
+                // ,url: "./uploadPic" //上传接口
+                ,url: "{:url('admin/upload/uploadLocality')}" //上传接口
+                ,data: {} //可选项。额外的参数，如：{id: 123, abc: 'xxx'}
+                ,done: function(res){
+                    console.log(res);
+                    //上传完毕回调
+                    $("#thumb_logo").val(res.data);
+                    $("#sm_logo").html('<img src="' + res.data + '" style="height: 120px;"/>');
+                }
+                ,error: function(){
+                    //请求异常回调
+                }
+            });
+        });
+    });
+
+
+
+    //百度富文本编辑器
+    var editor = UE.getEditor('LAY_editor2', {
+        initialFrameHeight:450,
+        autoHeight: false,
+        autoHeightEnabled:false,
+        autoFloatEnabled:false
+    });
+
+    function sub() {
+        var insideStatus = $('input[name="insideimg_status"]:checked').val();
+
+        if($("#stadium_id").val()==''){
+            layer.msg("举办场馆不能为空！");
+            return false;
+        }
+
+        // if($("#start_time").val()==''){
+        //     layer.msg("开始时间不能为空！");
+        //     return false;
+        // }
+
+
+        if($("#photo").val()==''){
+            layer.msg("请上传封面");
+            return false;
+        }
+
+
+        if(insideStatus==1){
+            if($("#thumb_logo").val()=='' || $("#thumb_logo").val()===undefined){
+                layer.msg("显示序章需要上传序章图片");
+                return false;
+            }
+        }
+
+        $.ajax({
+            url: "{:url('ExhibitionAdd')}",
+            type: 'post',
+            dataType: 'json',
+            data: $("#articleform").serialize(),
+            success: function (res) {
+                if (res.code == 200) {
+                    layer.msg(res.msg, {icon: 1, time: 1500, shade: 0.1}, function (index) {
+                        wk.layer_close();
+                    })
+                } else {
+                    $(".layui-btn").removeClass('layui-disabled').removeAttr('disabled');
+                    wk.error(res.msg);
+                    return false;
+                }
+            }
+        });
+    }
+
+
+    //日期选择
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#start_time'
+        })
+        laydate.render({
+            elem: '#end_time'
+        })
+    });
+</script>
+<script>
+    var n = wk.uploads({num:1,type:'png,jpg',url:"{:url('admin/upload/uploadLocalityMore')}",size:100});
+    function imgDel(e,obj){
+        wk.uploads_del(e,obj,n,"{:url('admin/upload/deleteLocality')}");
+    }
+</script>
+</body>
+</html>

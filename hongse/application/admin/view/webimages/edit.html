@@ -1,0 +1,142 @@
+`{include file="public/header" /}
+<body class="gray-bg">
+<div class="layui-fluid layui-col-md12">
+    <div class="layui-card">
+
+        <div class="layui-card-body layui-form">
+            <div class="layui-row layui-col-space10 layui-form-item ">
+
+                <form action="" id="articleform">
+
+                    <div class="layui-form-item layui-col-md-offset1 layui-col-md8">
+                        <label class="layui-form-label">所属模块</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" value="{$Exhibition.title}" readonly name="title" lay-verify="required" placeholder="标题">
+                        </div>
+                    </div>
+
+
+
+
+
+                    <div class="layui-form-item layui-col-md-offset1 layui-col-md8">
+                        <label class="layui-form-label">banner</label>
+                        <div class="layui-input-block">
+                            <input type="hidden" name="images" id="photo" value="{$Exhibition.images}" lay-verify="image">
+                            <input type="hidden" id="hid" value="{$Exhibition.images}">
+                            <div id="uploader" class="container">
+                                <div class="queueList">
+                                    <div class="placeholder">
+                                        <div id="filePicker"></div>
+                                        <p>或将照片拖到这里</p>
+                                    </div>
+                                </div>
+                                <div class="statusBar" style="display:none;">
+                                    <div class="layui-progress layui-progress-big active" lay-showpercent="true">
+                                        <div class="layui-progress-bar layui-bg-blue" lay-percent="0%">
+                                        </div>
+                                        <span></span>
+                                    </div>
+                                    <div class="info"></div>
+                                    <div class="btns">
+                                        <div id="goPicker" class="filePicker2"></div>
+                                        <div class="uploadBtn">开始上传</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="id" id="idd" value="{$Exhibition.id}">
+
+                </form>
+
+                <div class="layui-form-item layui-col-md-offset1 layui-col-md8">
+                    <div class="layui-input-block">
+                        <button type="button" onclick="sub()" class="layui-btn" lay-submit="" lay-filter="sub">保存
+                        </button>
+                        <button class="layui-btn layui-btn-primary" onclick="wk.layer_close('close')">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{include file="public/footer" /}
+
+<script>
+    //上传封面图片
+    $(document).ready(function(){
+        // 上传图片
+        layui.use('upload', function(){
+            var upload = layui.upload;
+            var topic_id = $("#topic_id").val()
+            //执行实例
+            var uploadInst = upload.render({
+                elem: '#cover_pic' //绑定元素
+                // ,url: "./uploadPic" //上传接口
+                ,url: "{:url('admin/upload/uploadLocality')}" //上传接口
+                ,data: {} //可选项。额外的参数，如：{id: 123, abc: 'xxx'}
+                ,done: function(res){
+                    console.log(res);
+                    //上传完毕回调
+                    $("#thumb_logo").val(res.data);
+                    $("#sm_logo").html('<img src="' + res.data + '" style="height: 120px;"/>');
+                }
+                ,error: function(){
+                    //请求异常回调
+                }
+            });
+        });
+    });
+
+
+    function sub() {
+        $.ajax({
+            url: "{:url('Edit')}",
+            type: 'post',
+            dataType: 'json',
+            data: $("#articleform").serialize(),
+            success: function (res) {
+                if (res.code == 200) {
+                    layer.msg(res.msg, {icon: 1, time: 1500, shade: 0.1}, function (index) {
+                        wk.layer_close();
+                    })
+                } else {
+                    $(".layui-btn").removeClass('layui-disabled').removeAttr('disabled');
+                    wk.error(res.msg);
+                    return false;
+                }
+            }
+        });
+    }
+
+
+    //日期选择
+    layui.use('laydate', function(){
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#start_time'
+        })
+        laydate.render({
+            elem: '#end_time'
+        })
+
+    });
+
+</script>
+<script>
+    var number = 0;
+    var idd = $("#idd").val();
+    if(idd==1){
+         number = 3;
+    }else{
+         number = 1;
+    }
+    var n = wk.uploads({num:number,type:'png,jpg',url:"{:url('admin/upload/uploadLocalityMore')}",status:'update'});
+    function imgDel(e,obj){
+        wk.uploads_del(e,obj,n,"{:url('admin/upload/deleteLocality')}");
+    }
+</script>
+</body>
+</html>
+`
