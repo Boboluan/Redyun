@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+<input type="text" name="product_name" id="product_name" value="" style="margin-top: 60px; margin-left: 200px;height: 34px;" onclick="Names(this)">
+
+
+<select name="product_name" id="names" style="width: 300px;height: 40px;">
+    <option value=""></option>
+</select>
+
+<!--<input type="number" name="product_id" id="product_id" value="" style="margin-top: 60px">-->
+<button onclick="sub(this)" style="height: 40px;width: 50px">查询</button>
+
+
+
+
+<table id="dataList"  width="2000" height="300" border="1" cellpadding="20"
+       cellspacing="0" style="margin-top: 80px">
+
+</table>
+
+
+</body>
+<script src="/jquery.min.js" type="text/javascript"></script>
+<script>
+
+    function Names() {
+        var product_name = document.getElementById("product_name").value;
+        var html = '<option value=""></option>';
+
+        $.post('/api/getid',{product_name:product_name},function (res){
+
+            for ( i = 0; i<res.length; i++){
+                var id = res[i].id;
+                var name = res[i].chinese_name;
+                html += "<option value='" + id + "' >"+ id +'---'+ name + "</option>";
+            }
+            $("#names").html(html)
+        })
+    }
+
+
+
+    function sub(){
+        var product_id =  $("#names").val();
+        // alert(a);
+        // return;
+        // var product_id = document.getElementById("product_id").value;
+        $.post('/api/Information',{product_id:product_id},function (res) {
+            $("#dataList").html(createHtml(res.data))
+        })
+    }
+
+    function createHtml(data){
+
+        var facemasktype_one=0
+        var filterbox_one=0
+        var cottonfilter_one=0
+        var filtercover_one=0
+
+        var facemasktype_two=0
+        var filterbox_two=0
+        var cottonfilter_two=0
+        var filtercover_two=0
+
+        var facemasktype_three=0
+        var filterbox_three=0
+        var cottonfilter_three=0
+        var filtercover_three=0
+
+        var masknum = 0
+        var text = ''
+
+        //第一组
+        if(data.productList.facemasktype_one!=undefined){
+            facemasktype_one=data.productList.facemasktype_one.length;
+        }
+        if(data.productList.filterbox_one!=undefined){
+            filterbox_one=data.productList.filterbox_one.length;
+        }
+        if(data.productList.cottonfilter_one!=undefined){
+            cottonfilter_one=data.productList.cottonfilter_one.length;
+        }
+        if(data.productList.filtercover_one!=undefined){
+            filtercover_one=data.productList.filtercover_one.length;
+        }
+
+        //第二组
+        if(data.productList.facemasktype_two!=undefined){
+            facemasktype_two=data.productList.facemasktype_two.length;
+        }
+        if(data.productList.filterbox_two!=undefined){
+            filterbox_two=data.productList.filterbox_two.length;
+        }
+        if(data.productList.cottonfilter_two!=undefined){
+            cottonfilter_two=data.productList.cottonfilter_two.length;
+        }
+        if(data.productList.filtercover_two!=undefined){
+            filtercover_two=data.productList.filtercover_two.length;
+        }
+
+
+        //第三组
+        if(data.productList.facemasktype_three!=undefined){
+            facemasktype_three=data.productList.facemasktype_three.length;
+        }
+        if(data.productList.filterbox_three!=undefined){
+            filterbox_three=data.productList.filterbox_three.length;
+        }
+        if(data.productList.cottonfilter_three!=undefined){
+            cottonfilter_three=data.productList.cottonfilter_three.length;
+        }
+        if(data.productList.filtercover_three!=undefined){
+            filtercover_three=data.productList.filtercover_three.length;
+        }
+
+        //口罩
+        if(data.productList.mask!=undefined){
+            masknum=data.productList.mask.length;
+        }
+
+        if(data.maskType=='false'){
+            text = '面罩';
+        }else{
+            text = '口罩';
+        }
+
+
+        var html=' <thead>\n' +
+            '    <tr>\n' +
+            '        <th>物质名('+text+')</th>\n' +
+            '        <th>面罩型号1('+facemasktype_one+')</th>\n' +
+            '        <th>滤毒盒型号1('+filterbox_one+')</th>\n' +
+            '        <th>过滤棉型号1('+cottonfilter_one+')</th>\n' +
+            '        <th>过滤棉盖适配型号1('+filtercover_one+')</th>\n' +
+
+            '        <th>面罩型号2('+facemasktype_two+')</th>\n' +
+            '        <th>滤毒盒型号2('+filterbox_two+')</th>\n' +
+            '        <th>过滤棉型号2('+cottonfilter_two+')</th>\n' +
+            '        <th>过滤棉盖适配型号2('+filtercover_two+')</th>\n' +
+
+
+            '        <th>面罩型号3('+facemasktype_three+')</th>\n' +
+            '        <th>滤毒盒型号3('+filterbox_three+')</th>\n' +
+            '        <th>过滤棉型号3('+cottonfilter_three+')</th>\n' +
+            '        <th>过滤棉盖适配型号3('+filtercover_three+')</th>\n' +
+
+            '        <th>口罩('+masknum+')</th>\n' +
+
+            '    </tr>\n' +
+            '    </thead>\n' +
+            '    <tbody >\n';
+        html+='<tr>';
+        html+=' <tr>\n' +
+            '        <td>'+data.chinese_name+'</td>\n';
+
+        //一组
+        html+=getHtml(data.productList.facemasktype_one)
+        html+=getHtml(data.productList.filterbox_one)
+        html+=getHtml(data.productList.cottonfilter_one)
+        html+=getHtml(data.productList.filtercover_one)
+        //二组
+        html+=getHtml(data.productList.facemasktype_two)
+        html+=getHtml(data.productList.filterbox_two)
+        html+=getHtml(data.productList.cottonfilter_two)
+        html+=getHtml(data.productList.filtercover_two)
+        //三组
+        html+=getHtml(data.productList.facemasktype_three)
+        html+=getHtml(data.productList.filterbox_three)
+        html+=getHtml(data.productList.cottonfilter_three)
+        html+=getHtml(data.productList.filtercover_three)
+        //口罩
+        html+=getHtml(data.productList.mask)
+        html+=    '    </tbody>';
+        return html;
+    }
+
+    function getHtml(a){
+        var html='        <td>';
+        if (a!=undefined){
+            for (var item of a){
+                html+=item.product_type+',<br>';
+            }
+        }
+        html+='</td>\n';
+        return html;
+    }
+
+</script>
+</html>
